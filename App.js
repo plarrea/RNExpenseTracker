@@ -65,7 +65,7 @@ export default function App() {
   const { colors } = GlobalStyles;
   return (
     <>
-      <StatusBar style="auto" />
+      <StatusBar style="light" />
       <ExpensesProvider>
         <GestureHandlerRootView style={{ flex: 1 }}>
           <NavigationContainer>
