@@ -1,13 +1,17 @@
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 import { GlobalStyles } from '../../constants/styles';
 import ExpensesList from './ExpensesList';
 import ExpensesSumary from './ExpensesSumary';
 
-const ExpensesOutput = ({ expensesPeriod, expenses }) => {
+const ExpensesOutput = ({ expensesPeriod, expenses, fallbackText }) => {
   return (
     <View style={styles.container}>
       <ExpensesSumary periodName={expensesPeriod} expenses={expenses} />
-      <ExpensesList expenses={expenses} />
+      {expenses.length > 0 ? (
+        <ExpensesList expenses={expenses} />
+      ) : (
+        <Text style={styles.infoText}>{fallbackText}</Text>
+      )}
     </View>
   );
 };
@@ -19,5 +23,11 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 24,
     backgroundColor: GlobalStyles.colors.primary700,
+  },
+  infoText: {
+    color: 'white',
+    fontSize: 16,
+    textAlign: 'center',
+    marginTop: 32,
   },
 });
