@@ -1,12 +1,18 @@
 import { useLayoutEffect } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { Alert, StyleSheet, View } from 'react-native';
 import ExpenseForm from '../components/ManageExpense/ExpenseForm';
 import IconButton from '../components/UI/IconButton';
 import { GlobalStyles } from '../constants/styles';
 import useExpenses from '../store/use-expenses';
+import { deleteExpense, storeExpense, updateExpense } from '../utils/http';
 
 const ManageExpense = ({ route, navigation }) => {
-  const { expenses, deleteExpense, updateExpense, addExpense } = useExpenses();
+  const {
+    expenses,
+    deleteExpense: deleteExpenseCtxt,
+    updateExpense: updateExpenseCtxt,
+    addExpense: addExpenseCtxt,
+  } = useExpenses();
   const editedExpenseId = route.params?.expenseId;
   const isEditing = !!editedExpenseId;
 
@@ -20,16 +26,43 @@ const ManageExpense = ({ route, navigation }) => {
     });
   }, [isEditing, navigation]);
 
-  const deleteExpenseHandler = () => {
-    deleteExpense(editedExpenseId);
+  const deleteExpenseHandler = async () => {
+    const res = await deleteExpense(editedExpenseId);
+    if (res) {
+      deleteExpenseCtxt(editedExpenseId);
+    } else {
+      Alert.alert(
+        'Delete Error',
+        'Something went wrong deleting the expense, please try again.',
+      );
+      return;
+    }
     navigation.goBack();
   };
 
-  const confirmHandler = (expenseData) => {
+  const confirmHandler = async (expenseData) => {
     if (isEditing) {
-      updateExpense(editedExpenseId, expenseData);
+      const res = await updateExpense(editedExpenseId, expenseData);
+      if (res) {
+        updateExpenseCtxt(editedExpenseId, expenseData);
+      } else {
+        Alert.alert(
+          'Update Error',
+          'Something went wrong updating the expense, please try again.',
+        );
+        return;
+      }
     } else {
-      addExpense(expenseData);
+      const id = await storeExpense(expenseData);
+      if (id) {
+        addExpenseCtxt({ ...expenseData, id });
+      } else {
+        Alert.alert(
+          'Expense Failed',
+          'Something went wrong adding the expense, please try again.',
+        );
+        return;
+      }
     }
     navigation.goBack();
   };
