@@ -60,5 +60,9 @@ export default [
       // Formatting
       'prettier/prettier': 'warn',
     },
+    env: {
+      es2021: true,
+      node: true, // 👈 this is the key line
+    },
   },
 ];
