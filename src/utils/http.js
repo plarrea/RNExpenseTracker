@@ -36,7 +36,7 @@ export const fetchExpenses = async () => {
     return expenses;
   } catch (error) {
     console.log(error);
-    return [];
+    return null;
   }
 };
 
